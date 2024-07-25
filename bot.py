@@ -72,7 +72,7 @@ def update_balance(user_id, amount):
 
 class ChargeModal(discord.ui.Modal):
     def __init__(self):
-        super().__init__(title="핀 번호 입력")
+        super().__init__(title="컬쳐랜드 상품권 핀 번호 입력")
 
         self.pin = discord.ui.TextInput(
             label="핀 번호",
@@ -186,6 +186,9 @@ class ConfirmPurchaseView(discord.ui.View):
         await interaction.response.send_message('구매가 취소되었습니다.', ephemeral=True)
 
 class MainMenuView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
     @discord.ui.button(label="충전", style=discord.ButtonStyle.primary, custom_id="charge")
     async def charge_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_modal(ChargeModal())
@@ -209,13 +212,5 @@ async def on_ready():
         view = MainMenuView()
         await channel.send(embed=embed, view=view)
 
-@tasks.loop(minutes=1)
-async def check_connection():
-    try:
-        response = requests.get(SERVER_URL + "/status")
-        if response.status_code != 200:
-            print("서버 상태 확인 실패")
-    except requests.RequestException as e:
-        print(f"서버 상태 확인 중 오류 발생: {e}")
 
 bot.run(TOKEN)
